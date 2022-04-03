@@ -15,10 +15,13 @@
   12.Knjizevna_vrsta: id, naziv, opis
 
 Везе:
-  1.Knjizevna_vrsta -> Knjiga 1:n
-  2.Zanr -> Knjiga 1:n
-  3.Knjiga_dodatniPodaci -> Knjiga 1:1
-  4.Knjiga -> Primerak 1:n
-  5.Izdavac -> Primerak 1:n
-  6.Autor_dodatniPodaci -> Autor 1:1
-  7.Autor <-> Knjiga n:n (Autor-Knjiga)
+  1. Knjizevna_vrsta -> Knjiga 1:n
+  2. Zanr -> Knjiga 1:n
+  3. Knjiga_dodatniPodaci -> Knjiga 1:1
+  4. Knjiga -> Primerak 1:n
+  5. Izdavac -> Primerak 1:n
+  6. Autor_dodatniPodaci -> Autor 1:1
+  7. Autor <-> Knjiga n:n (Autor-Knjiga)
+  8. Primerak -> Pozajmica 1:n
+  9. Uloga -> Korisnik 1:n
+  10. Korisnik -> Pozajmica 1:n
