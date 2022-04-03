@@ -1,7 +1,7 @@
 База података школска библиотека:
 
 Ентитети:
-  1.Кnjiga: ISBN (978-86; 13-цифрени број са 4 цртице), naziv, knjizevna_vrsta_id, zanr_id, dodatniPodaci_id
+  1.Кnjiga: ISBN (978-86; 13-цифрени број са 4 цртице), naziv, knjizevna_rod_id, knjizevna_vrsta_id, dodatniPodaci_id
   2.Autor: id, ime, prezime, dodatniPodaci_id
   3.Korisnik: email, lozinka, jmbg, ime, prezime, datum_rodjenja, broj_godina, uloga_id
   4.Knjiga_dodatniPodaci: id, godina_objavljivanja, starost_knjige
@@ -9,9 +9,9 @@
   6.Autor_dodatniPodaci: id, datum_rodjenja, datum_smrti, broj_godina, mesto_rodjenja, mesto_smrti, biografija, ocena  
   7.Pozajmica: id, clan_id, primerak_id, datum_uzimanja, rok, vraceno
   8.Autor-Knjiga: autor_id, knjiga_ISBN
-  9.Zanr: id, naziv, opis
+  9.Knjizevni_rod: id, naziv, opis
   10.Izdavac: id, ime, sediste
-  11.Uloga: id, naziv, opis
+  11.Uloga: id, naziv
   12.Knjizevna_vrsta: id, naziv, opis
 
 Везе:
