@@ -65,16 +65,37 @@ INSERT INTO Knjizevna_vrsta (id, naziv, knjizevni_rod_id) VALUES (1, N'рома�
 SELECT *
 FROM Knjizevna_vrsta;
 
+-- Функција ,,datumRodjenja''
+
+CREATE FUNCTION datumRodjenja(@jmbg CHAR(13))
+RETURNS DATE
+AS
+	BEGIN
+		DECLARE @datum_rodjenja DATE;
+		IF SUBSTRING(@jmbg, 5, 1) = '0' SET @datum_rodjenja = '2' + SUBSTRING(@jmbg, 5, 3) + '-' + SUBSTRING(@jmbg, 3, 2) + '-' + SUBSTRING(@jmbg, 1, 2)
+		ELSE SET @datum_rodjenja = '1' + SUBSTRING(@jmbg, 5, 3) + '-' + SUBSTRING(@jmbg, 3, 2) + '-' + SUBSTRING(@jmbg, 1, 2);
+		
+		RETURN @datum_rodjenja;
+	END;
+	
+DROP FUNCTION datumRodjenja;
+
 -- Функција ,,brojGodina''
 
-CREATE FUNCTION brojGodina(@godiste DATE)
+CREATE FUNCTION brojGodina(@jmbg CHAR(13))
 RETURNS INT
 AS
 	BEGIN
-		DECLARE @broj INT = DATEDIFF(YEAR, @godiste, GETDATE());
-		IF RIGHT(CONVERT(VARCHAR, @godiste, 112), 4) > RIGHT(CONVERT(VARCHAR, GETDATE(), 112), 4) RETURN @broj - 1;
+		DECLARE @datum_rodjenja DATE;
+		IF SUBSTRING(@jmbg, 5, 1) = '0' SET @datum_rodjenja = '2' + SUBSTRING(@jmbg, 5, 3) + '-' + SUBSTRING(@jmbg, 3, 2) + '-' + SUBSTRING(@jmbg, 1, 2)
+		ELSE SET @datum_rodjenja = '1' + SUBSTRING(@jmbg, 5, 3) + '-' + SUBSTRING(@jmbg, 3, 2) + '-' + SUBSTRING(@jmbg, 1, 2);
+	
+		DECLARE @broj INT = DATEDIFF(YEAR, @datum_rodjenja, GETDATE());
+		IF RIGHT(CONVERT(VARCHAR, @datum_rodjenja, 112), 4) > RIGHT(CONVERT(VARCHAR, GETDATE(), 112), 4) RETURN @broj - 1;
 		RETURN @broj;
 	END;
+	
+DROP FUNCTION brojGodina;
 
 -- Табела ,,Korisnik''
 
@@ -84,14 +105,17 @@ CREATE TABLE Korisnik(
   jmbg CHAR(13) NOT NULL,
   ime NVARCHAR(20) NOT NULL,
   prezime NVARCHAR(50) NOT NULL,
-  datum_rodjenja DATE,
-  broj_godina AS dbo.brojGodina(datum_rodjenja),
+  datum_rodjenja AS dbo.datumRodjenja(jmbg),
+  broj_godina AS dbo.brojGodina(jmbg),
   uloga_id INT FOREIGN KEY REFERENCES Uloga(id)
 );
 
-INSERT INTO Korisnik (email, lozinka, jmbg, ime, prezime, datum_rodjenja, uloga_id) VALUES (N'stefanovicsalex@SKBibioteka_C.rs', N'coamafija1312', '2210003710256', N'Александар', N'Стефановић', '2003-10-22', 1),
-(N'stefanovicsalex@SKBibioteka_Z.rs', N'coamafija1312', '2210003710256', N'Александар', N'Стефановић', '2003-10-22', 2),
-(N'stefanovicsalex@SKBibioteka_A.rs', N'coamafija1312', '2210003710256', N'Александар', N'Стефановић', '2003-10-22', 3);
+DROP TABLE Korisnik;
+
+INSERT INTO Korisnik (email, lozinka, jmbg, ime, prezime, uloga_id) VALUES (N'stefanovicsalex@SKBibioteka_C.rs', N'coamafija1312', '2210003710256', N'Александар', N'Стефановић', 1),
+(N'stefanovicsalex@SKBibioteka_Z.rs', N'coamafija1312', '2210003710256', N'Александар', N'Стефановић', 2),
+(N'stefanovicsalex@SKBibioteka_A.rs', N'coamafija1312', '2210003710256', N'Александар', N'Стефановић', 3),
+(N'aleksandargerasimovic@SKBibioteka_A.rs', N'alekgera551', '1502970710742', N'Александар', N'Герасимовић', 3);
 
 DELETE FROM Korisnik;
 
