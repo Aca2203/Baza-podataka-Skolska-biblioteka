@@ -1,6 +1,8 @@
 CREATE DATABASE [Skolska biblioteka];
 USE [Skolska biblioteka];
 
+-- Табела ,,Uloga''
+
 CREATE TABLE Uloga(
   id INT PRIMARY KEY,
   naziv NVARCHAR(50) NOT NULL
@@ -12,6 +14,8 @@ INSERT INTO Uloga (id, naziv) VALUES (1, N'Члан'),
 
 SELECT *
 FROM Uloga;
+
+-- Табела ,,Izdavac''
 
 CREATE TABLE Izdavac(
   id INT PRIMARY KEY,
@@ -28,6 +32,8 @@ INSERT INTO Izdavac (id, ime, sediste) VALUES (1, N'Дерета', N'Кнез М
 SELECT *
 FROM Izdavac;
 
+-- Табела ,,Knjizevni_rod''
+
 CREATE TABLE Knjizevni_rod(
   id INT PRIMARY KEY,
   naziv NVARCHAR(50) NOT NULL,
@@ -40,6 +46,8 @@ INSERT INTO Knjizevni_rod (id, naziv, opis) VALUES (1, N'Лирика', N'Нај
 
 SELECT *
 FROM Knjizevni_rod;
+
+-- Табела ,,Knjizevna_vrsta''
 
 CREATE TABLE Knjizevna_vrsta(
   id INT PRIMARY KEY,
@@ -57,3 +65,35 @@ INSERT INTO Knjizevna_vrsta (id, naziv, knjizevni_rod_id) VALUES (1, N'рома�
 SELECT *
 FROM Knjizevna_vrsta;
 
+-- Функција ,,brojGodina''
+
+CREATE FUNCTION brojGodina(@godiste DATE)
+RETURNS INT
+AS
+	BEGIN
+		DECLARE @broj INT = DATEDIFF(YEAR, @godiste, GETDATE());
+		IF RIGHT(CONVERT(VARCHAR, @godiste, 112), 4) > RIGHT(CONVERT(VARCHAR, GETDATE(), 112), 4) RETURN @broj - 1;
+		RETURN @broj;
+	END;
+
+-- Табела ,,Korisnik''
+
+CREATE TABLE Korisnik(
+  email NVARCHAR(50) PRIMARY KEY,
+  lozinka NVARCHAR(30) NOT NULL,
+  jmbg CHAR(13) NOT NULL,
+  ime NVARCHAR(20) NOT NULL,
+  prezime NVARCHAR(50) NOT NULL,
+  datum_rodjenja DATE,
+  broj_godina AS dbo.brojGodina(datum_rodjenja),
+  uloga_id INT FOREIGN KEY REFERENCES Uloga(id)
+);
+
+INSERT INTO Korisnik (email, lozinka, jmbg, ime, prezime, datum_rodjenja, uloga_id) VALUES (N'stefanovicsalex@SKBibioteka_C.rs', N'coamafija1312', '2210003710256', N'Александар', N'Стефановић', '2003-10-22', 1),
+(N'stefanovicsalex@SKBibioteka_Z.rs', N'coamafija1312', '2210003710256', N'Александар', N'Стефановић', '2003-10-22', 2),
+(N'stefanovicsalex@SKBibioteka_A.rs', N'coamafija1312', '2210003710256', N'Александар', N'Стефановић', '2003-10-22', 3);
+
+DELETE FROM Korisnik;
+
+SELECT *
+FROM Korisnik;
