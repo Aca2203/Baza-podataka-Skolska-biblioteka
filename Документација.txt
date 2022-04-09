@@ -9,14 +9,14 @@
   6.Autor_dodatniPodaci: id, datum_rodjenja, datum_smrti, broj_godina, mesto_rodjenja, mesto_smrti, biografija, ocena  
   7.Pozajmica: id, clan_id, primerak_id, datum_uzimanja, rok, vraceno
   8.Autor-Knjiga: autor_id, knjiga_ISBN
-  9.Knjizevni_rod: id, naziv, opis
+  --9.Knjizevni_rod: id, naziv, opis
   --10.Izdavac: id, ime, sediste
   --11.Uloga: id, naziv
-  12.Knjizevna_vrsta: id, naziv, opis
+  --12.Knjizevna_vrsta: id, naziv, opis, knjizevni_rod_id
 
 Везе:
   1. Knjizevna_vrsta -> Knjiga 1:n
-  2. Zanr -> Knjiga 1:n
+  2. Knjizevni_rod -> Knjiga 1:n
   3. Knjiga_dodatniPodaci -> Knjiga 1:1
   4. Knjiga -> Primerak 1:n
   5. Izdavac -> Primerak 1:n
@@ -25,3 +25,4 @@
   8. Primerak -> Pozajmica 1:n
   9. Uloga -> Korisnik 1:n
   10. Korisnik -> Pozajmica 1:n
+  11. Knjizevni_rod -> Knjizevna_vrsta 1:n

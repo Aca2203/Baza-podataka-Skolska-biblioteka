@@ -40,3 +40,20 @@ INSERT INTO Knjizevni_rod (id, naziv, opis) VALUES (1, N'Лирика', N'Нај
 
 SELECT *
 FROM Knjizevni_rod;
+
+CREATE TABLE Knjizevna_vrsta(
+  id INT PRIMARY KEY,
+  naziv NVARCHAR(50) NOT NULL,
+  opis NVARCHAR(500),
+  knjizevni_rod_id INT FOREIGN KEY REFERENCES Knjizevni_rod(id)
+);
+
+INSERT INTO Knjizevna_vrsta (id, naziv, knjizevni_rod_id) VALUES (1, N'роман', 2),
+(2, N'комедија', 3),
+(3, N'трагедија', 3),
+(4, N'љубавна песма', 1),
+(5, N'збирка приповедака', 2);
+
+SELECT *
+FROM Knjizevna_vrsta;
+
