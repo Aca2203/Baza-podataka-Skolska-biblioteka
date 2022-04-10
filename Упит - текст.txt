@@ -126,6 +126,8 @@ DELETE FROM Korisnik;
 SELECT *
 FROM Korisnik;
 
+-- Функција ,,brojGodinaAutor''
+
 CREATE FUNCTION brojGodinaAutor(@datum_rodjenja DATE, @datum_smrti DATE)
 RETURNS INT
 AS
@@ -135,8 +137,9 @@ BEGIN
 	RETURN @broj;
 END;
 
-DROP FUNCTION brojGodinaAutor
+DROP FUNCTION brojGodinaAutor;
 
+-- Табела ,,Autor_dodatniPodaci''
 CREATE TABLE Autor_dodatniPodaci(
   id INT PRIMARY KEY,
   datum_rodjenja DATE,
@@ -157,6 +160,27 @@ INSERT INTO Autor_dodatniPodaci (id, datum_rodjenja, datum_smrti, mesto_rodjenja
 SELECT *
 FROM Autor_dodatniPodaci;
 
-DELETE FROM Autor_dodatniPodaci;
+-- Табела ,,Autor''
+CREATE TABLE Autor(
+  id INT PRIMARY KEY,
+  ime NVARCHAR(20) NOT NULL,
+  prezime NVARCHAR(50) NOT NULL,
+  dodatniPodaci_id INT FOREIGN KEY REFERENCES Autor_dodatniPodaci(id)
+);
+
+INSERT INTO Autor (id, ime, prezime, dodatniPodaci_id) VALUES (1, N'Иво', N'Андрић', 1),
+(2, N'Добрица', N'Ерић', NULL),
+(3, N'Фјодор', N'Михајловић Достојевски', 2),
+(4, N'Добрица', N'Ћосић', NULL),
+(5, N'Милош', N'Црњански', NULL),
+(6, N'Лав', N'Николајевич Толстој', 3),
+(7, N'Марк', N'Твен', NULL),
+(8, N'Џорџ', N'Орвел', NULL),
+(9, N'Жил', N'Верн', NULL),
+(10, N'Меша', N'Селимовић', NULL);
+
+SELECT *
+FROM Autor
+JOIN Autor_dodatniPodaci ON Autor.dodatniPodaci_id = Autor_dodatniPodaci.id;
 
 USE [Skolska biblioteka];

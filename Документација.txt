@@ -2,11 +2,11 @@
 
 Ентитети:
   1.Кnjiga: ISBN (978-86; 13-цифрени број са 4 цртице), naziv, knjizevna_rod_id, knjizevna_vrsta_id, dodatniPodaci_id
-  2.Autor: id, ime, prezime, dodatniPodaci_id
+  --2.Autor: id, ime, prezime, dodatniPodaci_id
   --3.Korisnik: email, lozinka, jmbg, ime, prezime, broj_godina, uloga_id
   4.Knjiga_dodatniPodaci: id, godina_objavljivanja, starost_knjige
   5.Primerak: id, broj_strana, tvrde_korice, izdavac_id, knjiga_ISBN, kolicina
-  6.Autor_dodatniPodaci: id, datum_rodjenja, datum_smrti, broj_godina, mesto_rodjenja, mesto_smrti, biografija, ocena  
+  --6.Autor_dodatniPodaci: id, datum_rodjenja, datum_smrti, broj_godina, mesto_rodjenja, mesto_smrti, biografija, ocena  
   7.Pozajmica: id, clan_id, primerak_id, datum_uzimanja, rok, vraceno
   8.Autor-Knjiga: autor_id, knjiga_ISBN
   --9.Knjizevni_rod: id, naziv, opis
