@@ -126,4 +126,37 @@ DELETE FROM Korisnik;
 SELECT *
 FROM Korisnik;
 
+CREATE FUNCTION brojGodinaAutor(@datum_rodjenja DATE, @datum_smrti DATE)
+RETURNS INT
+AS
+BEGIN
+	DECLARE @broj INT = DATEDIFF(YEAR, @datum_rodjenja, @datum_smrti);
+	IF RIGHT(CONVERT(VARCHAR, @datum_rodjenja, 112), 4) > RIGHT(CONVERT(VARCHAR, @datum_smrti, 112), 4) RETURN @broj - 1;
+	RETURN @broj;
+END;
+
+DROP FUNCTION brojGodinaAutor
+
+CREATE TABLE Autor_dodatniPodaci(
+  id INT PRIMARY KEY,
+  datum_rodjenja DATE,
+  datum_smrti DATE,
+  broj_godina AS dbo.brojGodinaAutor(datum_rodjenja, datum_smrti),
+  mesto_rodjenja NVARCHAR(40),
+  mesto_smrti NVARCHAR(40),
+  biografija NVARCHAR(2000),
+  ocena INT -- од 1 до 10
+);
+
+DROP TABLE Autor_dodatniPodaci
+
+INSERT INTO Autor_dodatniPodaci (id, datum_rodjenja, datum_smrti, mesto_rodjenja, mesto_smrti, ocena) VALUES (1, '1892-10-09', '1975-03-13', N'Долац, Аустроугарска', N'Београд, СФР Југославија', 10), -- Иво Андрић
+(2, '1821-11-11', '1881-02-09', N'Москва, Руска Империја', N'Санкт Петербург, Руска Империја', 9), -- Достојевски
+(3, '1828-09-09', '1910-11-20', N'Јасна Пољана, Руска Империја', N'Астапово, Руска Империја', 8); -- Толстој
+
+SELECT *
+FROM Autor_dodatniPodaci;
+
+DELETE FROM Autor_dodatniPodaci;
+
 USE [Skolska biblioteka];
