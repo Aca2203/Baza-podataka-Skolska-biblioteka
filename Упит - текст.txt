@@ -2,7 +2,6 @@ CREATE DATABASE [Skolska biblioteka];
 USE [Skolska biblioteka];
 
 -- Табела ,,Uloga''
-
 CREATE TABLE Uloga(
   id INT PRIMARY KEY,
   naziv NVARCHAR(50) NOT NULL
@@ -16,7 +15,6 @@ SELECT *
 FROM Uloga;
 
 -- Табела ,,Izdavac''
-
 CREATE TABLE Izdavac(
   id INT PRIMARY KEY,
   ime NVARCHAR(50) NOT NULL,
@@ -33,7 +31,6 @@ SELECT *
 FROM Izdavac;
 
 -- Табела ,,Knjizevni_rod''
-
 CREATE TABLE Knjizevni_rod(
   id INT PRIMARY KEY,
   naziv NVARCHAR(50) NOT NULL,
@@ -48,7 +45,6 @@ SELECT *
 FROM Knjizevni_rod;
 
 -- Табела ,,Knjizevna_vrsta''
-
 CREATE TABLE Knjizevna_vrsta(
   id INT PRIMARY KEY,
   naziv NVARCHAR(50) NOT NULL,
@@ -66,7 +62,6 @@ SELECT *
 FROM Knjizevna_vrsta;
 
 -- Функција ,,datumRodjenja''
-
 CREATE FUNCTION datumRodjenja(@jmbg CHAR(13))
 RETURNS DATE
 AS
@@ -81,7 +76,6 @@ AS
 DROP FUNCTION datumRodjenja;
 
 -- Функција ,,brojGodina''
-
 CREATE FUNCTION brojGodina(@jmbg CHAR(13))
 RETURNS INT
 AS
@@ -98,7 +92,6 @@ AS
 DROP FUNCTION brojGodina;
 
 -- Табела ,,Korisnik''
-
 CREATE TABLE Korisnik(
   email NVARCHAR(50) PRIMARY KEY,
   lozinka NVARCHAR(30) NOT NULL,
@@ -127,7 +120,6 @@ SELECT *
 FROM Korisnik;
 
 -- Функција ,,brojGodinaAutor''
-
 CREATE FUNCTION brojGodinaAutor(@datum_rodjenja DATE, @datum_smrti DATE)
 RETURNS INT
 AS
@@ -182,5 +174,28 @@ INSERT INTO Autor (id, ime, prezime, dodatniPodaci_id) VALUES (1, N'Иво', N'�
 SELECT *
 FROM Autor
 JOIN Autor_dodatniPodaci ON Autor.dodatniPodaci_id = Autor_dodatniPodaci.id;
+
+-- Функција ,,starostKnjige''
+
+CREATE FUNCTION starostKnjige(@godina INT)
+RETURNS INT
+AS
+BEGIN
+	DECLARE @starost INT = CAST(LEFT(CONVERT(VARCHAR, GETDATE(), 112), 4) AS INT) - @godina;
+	RETURN @starost;
+END;
+
+CREATE TABLE Knjiga_dodatniPodaci(
+  id INT PRIMARY KEY,
+  godina_objavljivanja INT,
+  starost_knjige AS dbo.starostKnjige(godina_objavljivanja)
+);
+
+INSERT INTO Knjiga_dodatniPodaci (id, godina_objavljivanja) VALUES (1, 1945),
+(2, 1966),
+(3, 1866);
+
+SELECT *
+FROM Knjiga_dodatniPodaci;
 
 USE [Skolska biblioteka];
