@@ -115,9 +115,15 @@ DROP TABLE Korisnik;
 INSERT INTO Korisnik (email, lozinka, jmbg, ime, prezime, uloga_id) VALUES (N'stefanovicsalex@SKBibioteka_C.rs', N'coamafija1312', '2210003710256', N'Александар', N'Стефановић', 1),
 (N'stefanovicsalex@SKBibioteka_Z.rs', N'coamafija1312', '2210003710256', N'Александар', N'Стефановић', 2),
 (N'stefanovicsalex@SKBibioteka_A.rs', N'coamafija1312', '2210003710256', N'Александар', N'Стефановић', 3),
-(N'aleksandargerasimovic@SKBibioteka_A.rs', N'alekgera551', '1502970710742', N'Александар', N'Герасимовић', 3);
+(N'aleksandargerasimovic@SKBibioteka_A.rs', N'alekgera551', '1502970710742', N'Александар', N'Герасимовић', 3),
+(N'milosurosevic@SKBibioteka_C.rs', N'losmi321', '2106003710932', N'Милош', N'Урошевић', 1),
+(N'jelenanikolic@SKBibioteka_Z.rs', N'jecapereca95', '1707995700111', N'Јелена', N'Николић', 2),
+(N'nikolavucic@SKBibioteka_Z.rs', N'dzonidep83', '1704983710932', N'Никола', N'Вучић', 2),
+(N'marijapasic@SKBibioteka_C.rs', N'marija121', '3004004700932', N'Марија', N'Пашић', 1);
 
 DELETE FROM Korisnik;
 
 SELECT *
 FROM Korisnik;
+
+USE [Skolska biblioteka];
