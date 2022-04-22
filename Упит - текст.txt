@@ -185,17 +185,45 @@ BEGIN
 	RETURN @starost;
 END;
 
+-- Табела ,,Knjiga_dodatniPodaci''
+
 CREATE TABLE Knjiga_dodatniPodaci(
   id INT PRIMARY KEY,
   godina_objavljivanja INT,
   starost_knjige AS dbo.starostKnjige(godina_objavljivanja)
 );
 
-INSERT INTO Knjiga_dodatniPodaci (id, godina_objavljivanja) VALUES (1, 1945),
-(2, 1966),
-(3, 1866);
+INSERT INTO Knjiga_dodatniPodaci (id, godina_objavljivanja) VALUES (1, 1945), -- На Дрини ћуприја
+(2, 1966), -- Вашар у Тополи
+(3, 1866); -- 
 
 SELECT *
 FROM Knjiga_dodatniPodaci;
+
+-- Табела ,,Knjiga''
+
+CREATE TABLE Knjiga(
+  ISBN CHAR(17) PRIMARY KEY,
+  naziv NVARCHAR(70) NOT NULL,
+  knjizevni_rod_id INT FOREIGN KEY REFERENCES Knjizevni_rod(id),
+  knjizevna_vrsta_id INT FOREIGN KEY REFERENCES Knjizevna_vrsta(id),
+  dodatniPodaci_id INT FOREIGN KEY REFERENCES Knjiga_dodatniPodaci(id)
+);
+
+INSERT INTO Knjiga (ISBN, naziv, knjizevni_rod_id, knjizevna_vrsta_id, dodatniPodaci_id) VALUES ('978-86-1729-12-17', N'На Дрини Ћуприја', 2, 1, 1),
+('978-86-7401-132-1', N'Ана Карењина', 2, 1, NULL),
+('978-86-4130-1-131', N'Рат и мир', 2, 1, NULL),
+('978-86-7410-431-1', N'20000 миља под морем', 2, 1, NULL),
+('978-86-4710-709-2', N'Вашар у Тополи', 1, 6, 2),
+('978-86-4109-812-5', N'Корени', 2, 1, NULL),
+('978-86-0971-8-838', N'Деобе', 2, 1, NULL),
+('978-86-0183-99-22', N'Време власти', 2, 1, NULL),
+('978-86-0193-092-1', N'Дервиш и смрт', 2, 1, 2),
+('978-86-8536-928-6', N'Животињска фарма', 2, 1, 1);
+
+DELETE FROM Knjiga;
+
+SELECT *
+FROM Knjiga;
 
 USE [Skolska biblioteka];
