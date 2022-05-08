@@ -249,3 +249,414 @@ CREATE TABLE Pozajmica(
 );
 
 -- Stor procedure:
+
+go
+CREATE PROCEDURE Uloguj_se
+@email VARCHAR(50),
+@lozinka VARCHAR(30)
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS(SELECT TOP 1 email FROM Korisnik
+  WHERE email = @email AND lozinka = @lozinka)
+  BEGIN
+    RETURN 0;
+  END;
+  RETURN 1;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Korisnik_Insert
+@email VARCHAR(50),
+@lozinka VARCHAR(30)
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 email FROM Korisnik
+  WHERE email = @email)
+  RETURN 1
+  ELSE
+    INSERT INTO Korisnik (email, lozinka) VALUES (@email, @lozinka)
+    RETURN 0;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Korisnik_Update
+@email NVARCHAR(50),
+@lozinka NVARCHAR(100)
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 email FROM Korisnik
+  WHERE email = @email)
+  BEGIN
+    UPDATE Korisnik SET lozinka = @lozinka WHERE email = @email
+    RETURN 0;
+  END
+  RETURN -1;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Izdavac_Insert
+@ime VARCHAR(50),
+@sediste VARCHAR(50)
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 ime FROM Izdavac
+  WHERE ime = @ime)
+  RETURN 1;
+  ELSE
+    INSERT INTO Izdavac (ime, sediste) VALUES (@ime, @sediste)
+    RETURN 0;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Izdavac_Update
+@id INT,
+@ime VARCHAR(50),
+@sediste VARCHAR(50)
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 ime FROM Izdavac
+  WHERE ime = @ime)
+  BEGIN
+    UPDATE Izdavac SET ime = @ime, sediste = @sediste WHERE id = @id;
+    RETURN 0;
+  END
+  RETURN -1;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Knjizevna_vrsta_Insert
+@naziv VARCHAR(50),
+@opis VARCHAR(500),
+@knjizevni_rod_id INT
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 naziv FROM Knjizevna_vrsta
+  WHERE naziv = @naziv)
+  RETURN 1;
+  ELSE
+    INSERT INTO Knjizevna_vrsta (naziv, opis, knjizevni_rod_id) VALUES (@naziv, @opis, @knjizevni_rod_id);
+    RETURN 0;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Knjizevna_vrsta_Update
+@id INT,
+@naziv VARCHAR(50),
+@opis VARCHAR(500),
+@knjizevni_rod_id INT
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 naziv FROM Knjizevna_vrsta
+  WHERE id = @id)
+  BEGIN
+    UPDATE Knjizevna_vrsta SET naziv = @naziv, opis = @opis, knjizevni_rod_id = @knjizevni_rod_id WHERE id = @id;
+    RETURN 0;
+  END
+  RETURN -1;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Autor_Insert
+@id INT,
+@ime VARCHAR(20),
+@prezime VARCHAR(50),
+@dodatniPodaci_id INT
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 id FROM Autor
+  WHERE id = @id)
+  RETURN 1;
+  ELSE
+    INSERT INTO Autor (ime, prezime, dodatniPodaci_id) VALUES (@ime, @prezime, @dodatniPodaci_id);
+    RETURN 0;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Autor_Update
+@id INT,
+@ime VARCHAR(20),
+@prezime VARCHAR(50),
+@dodatniPodaci_id INT
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 id FROM Autor
+  WHERE id = @id)
+  BEGIN
+    UPDATE Autor SET ime = @ime, prezime = @prezime, dodatniPodaci_id = @dodatniPodaci_id WHERE id = @id;
+    RETURN 0;
+  END
+  RETURN -1;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Knjiga_Insert
+@naziv VARCHAR(70),
+@knjizevni_rod_id INT,
+@knjizevna_vrsta_id INT,
+@dodatniPodaci_id INT,
+@izdavac_id INT,
+@kolicina INT
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 naziv FROM Knjiga
+  WHERE naziv = @naziv)
+  RETURN 1;
+  ELSE
+    INSERT INTO Knjiga (naziv, knjizevni_rod_id, knjizevna_vrsta_id, dodatniPodaci_id, izdavac_id, kolicina) VALUES (@naziv, @knjizevni_rod_id, @knjizevna_vrsta_id, @dodatniPodaci_id, @izdavac_id, @kolicina);
+    RETURN 0;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Knjiga_Update
+@ISBN CHAR(17),
+@naziv VARCHAR(70),
+@knjizevni_rod_id INT,
+@knjizevna_vrsta_id INT,
+@dodatniPodaci_id INT,
+@izdavac_id INT,
+@kolicina INT
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 ISBN FROM Knjiga
+  WHERE ISBN = @ISBN)
+  BEGIN
+    UPDATE Knjiga SET naziv = @naziv, knjizevni_rod_id = @knjizevni_rod_id, knjizevna_vrsta_id = @knjizevna_vrsta_id, dodatniPodaci_id = @dodatniPodaci_id, izdavac_id = @izdavac_id, kolicina = @kolicina WHERE ISBN = @ISBN;
+    RETURN 0;
+  END
+  RETURN -1;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Autor_dodatniPodaci_Insert
+@id INT,
+@datum_rodjenja DATE,
+@datum_smrti DATE,
+@mesto_rodjenja VARCHAR(40),
+@mesto_smrti VARCHAR(40),
+@biografija VARCHAR(2000),
+@ocena INT
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 id FROM Autor_dodatniPodaci
+  WHERE id = @id)
+  RETURN 1;
+  ELSE
+    INSERT INTO Autor_dodatniPodaci (datum_rodjenja, datum_smrti, mesto_rodjenja, mesto_smrti, biografija, ocena) VALUES (@datum_rodjenja, @datum_smrti, @mesto_rodjenja, @mesto_smrti, @biografija, @ocena);
+    RETURN 0;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Autor_dodatniPodaci_Update
+@id INT,
+@datum_rodjenja DATE,
+@datum_smrti DATE,
+@mesto_rodjenja VARCHAR(40),
+@mesto_smrti VARCHAR(40),
+@biografija VARCHAR(2000),
+@ocena INT
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 id FROM Autor_dodatniPodaci
+  WHERE id = @id)
+  BEGIN
+    UPDATE Autor_dodatniPodaci SET datum_rodjenja = @datum_rodjenja, datum_smrti = @datum_smrti, mesto_rodjenja = @mesto_rodjenja, mesto_smrti = @mesto_smrti, biografija = @biografija, ocena = @ocena WHERE id = @id;
+    RETURN 0;
+  END
+  RETURN -1;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Pozajmica_Insert
+@id INT,
+@datum_uzimanja DATE,
+@rok INT,
+@vraceno CHAR(2),
+@clan_email VARCHAR(50),
+@zaposleni_email VARCHAR(50),
+@knjiga_ISBN CHAR(17)
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 id FROM Pozajmica
+  WHERE id = @id)
+  RETURN 1;
+  ELSE
+    INSERT INTO Pozajmica (id, datum_uzimanja, rok, vraceno, clan_email, zaposleni_email, knjiga_ISBN) VALUES (@id, @datum_uzimanja, @rok, @vraceno, @clan_email, @zaposleni_email, @knjiga_ISBN);
+    RETURN 0;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Pozajmica_Update
+@id INT,
+@datum_uzimanja DATE,
+@rok INT,
+@vraceno CHAR(2),
+@clan_email VARCHAR(50),
+@zaposleni_email VARCHAR(50),
+@knjiga_ISBN CHAR(17)
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 id FROM Pozajmica
+  WHERE id = @id)
+  BEGIN
+    UPDATE Pozajmica SET datum_uzimanja = @datum_uzimanja, rok = @rok, vraceno = @vraceno, clan_email = @clan_email, zaposleni_email = @zaposleni_email, knjiga_ISBN = @knjiga_ISBN WHERE id = @id;
+    RETURN 0;
+  END
+  RETURN -1;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Knjiga_dodatniPodaci_Insert
+@id INT,
+@godina_objavljivanja INT
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 id FROM Knjiga_dodatniPodaci
+  WHERE id = @id)
+  RETURN 1;
+  ELSE
+    INSERT INTO Knjiga_dodatniPodaci (godina_objavljivanja) VALUES (@godina_objavljivanja);
+    RETURN 0;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Knjiga_dodatniPodaci_Update
+@id INT,
+@godina_objavljivanja INT
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 id FROM Knjiga_dodatniPodaci
+  WHERE id = @id)
+  BEGIN
+    UPDATE Knjiga_dodatniPodaci SET godina_objavljivanja = @godina_objavljivanja WHERE id = @id;
+    RETURN 0;
+  END
+  RETURN -1;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Autor_Knjiga_Insert
+@id INT,
+@autor_id INT,
+@knjiga_ISBN CHAR(17)
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 id FROM Autor_Knjiga
+  WHERE id = @id)
+  RETURN 1;
+  ELSE
+    INSERT INTO Autor_Knjiga (autor_id, knjiga_ISBN) VALUES (@autor_id, @knjiga_ISBN);
+    RETURN 0;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+go
+CREATE PROCEDURE Autor_Knjiga_Update
+@id INT,
+@autor_id INT,
+@knjiga_ISBN CHAR(17)
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  IF EXISTS (SELECT TOP 1 id FROM Autor_Knjiga
+  WHERE id = @id)
+  BEGIN
+    UPDATE Autor_Knjiga SET autor_id = @autor_id, knjiga_ISBN = @knjiga_ISBN WHERE id = @id;
+    RETURN 0;
+  END
+  RETURN -1;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
+go
+
+USE Skolska_biblioteka;
