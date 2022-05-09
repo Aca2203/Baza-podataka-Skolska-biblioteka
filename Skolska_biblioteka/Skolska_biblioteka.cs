@@ -15,12 +15,14 @@ namespace Skolska_biblioteka
         SqlCommand komanda = new SqlCommand();
         SqlDataAdapter adapter = new SqlDataAdapter();
         DataSet set = new DataSet();
+        string naredba;
+        DataTable tabela = new DataTable();
 
         public int Provera_Korisnika(string email, string lozinka)
         {
             veza.ConnectionString = CS;
 
-            int rezultat;
+            int rezultat = 0;
 
             komanda.Connection = veza;
             komanda.CommandType = CommandType.StoredProcedure;
@@ -35,17 +37,76 @@ namespace Skolska_biblioteka
             veza.Close();
 
             int ret;
-            ret = (int) komanda.Parameters["@RETURN_VALUE"].Value;
-            if (ret == 0)
-            {
-                rezultat = 0;
-            }
-            else
+            ret = (int) komanda.Parameters["@RETURN_VALUE"].Value;            
+            if (ret == 1)
             {
                 rezultat = 1;
             }
+            if (ret == 2)
+            {
+                rezultat = 2;
+            }
+            if (ret == 3)
+            {
+                rezultat = 3;
+            }
+            if (ret == -1)
+            {
+                rezultat = -1;
+            }
 
             return rezultat;
+        }
+
+        public DataTable Grid_administrator_popuni()
+        {
+            tabela.Reset();
+            tabela = new DataTable();
+
+            naredba = "SELECT ime + ' ' + prezime AS 'Име и презиме администратора', jmbg AS 'ЈМБГ', email AS 'Имејл адреса', lozinka AS 'Лозинка' FROM Korisnik WHERE uloga_id = 3";
+            
+            adapter = new SqlDataAdapter(naredba, veza);
+
+            veza.ConnectionString = CS;
+            veza.Open();
+            adapter.Fill(tabela);
+            veza.Close();
+
+            return tabela;
+        }
+
+        public DataTable Grid_zaposleni_popuni()
+        {
+            tabela.Reset();
+            tabela = new DataTable();
+
+            naredba = "SELECT ime + ' ' + prezime AS 'Име и презиме запосленог', jmbg AS 'ЈМБГ', email AS 'Имејл адреса', lozinka AS 'Лозинка' FROM Korisnik WHERE uloga_id = 2";
+
+            adapter = new SqlDataAdapter(naredba, veza);
+
+            veza.ConnectionString = CS;
+            veza.Open();
+            adapter.Fill(tabela);
+            veza.Close();
+
+            return tabela;
+        }
+
+        public DataTable Grid_clan_popuni()
+        {
+            tabela.Reset();
+            tabela = new DataTable();
+
+            naredba = "SELECT ime + ' ' + prezime AS 'Име и презиме члана', jmbg AS 'ЈМБГ', email AS 'Имејл адреса', lozinka AS 'Лозинка' FROM Korisnik WHERE uloga_id = 1";
+
+            adapter = new SqlDataAdapter(naredba, veza);
+
+            veza.ConnectionString = CS;
+            veza.Open();
+            adapter.Fill(tabela);
+            veza.Close();
+
+            return tabela;
         }
     }
 }

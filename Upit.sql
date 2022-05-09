@@ -251,7 +251,7 @@ CREATE TABLE Pozajmica(
 -- Stor procedure:
 
 go
-CREATE PROCEDURE Uloguj_se
+ALTER PROCEDURE Uloguj_se
 @email VARCHAR(50),
 @lozinka VARCHAR(30)
 AS
@@ -260,9 +260,24 @@ BEGIN TRY
   IF EXISTS(SELECT TOP 1 email FROM Korisnik
   WHERE email = @email AND lozinka = @lozinka)
   BEGIN
-    RETURN 0;
+    DECLARE @uloga INT;
+    SET @uloga = (SELECT TOP 1 uloga_id FROM Korisnik
+    WHERE email = @email AND lozinka = @lozinka);
+  
+    IF (@uloga = 1)
+    BEGIN
+      RETURN 1;
+    END
+    IF (@uloga = 2)
+    BEGIN
+      RETURN 2;
+    END
+    IF (@uloga = 3)
+    BEGIN
+      RETURN 3;
+    END
   END;
-  RETURN 1;
+  RETURN -1;
 END TRY
 BEGIN CATCH
   RETURN @@ERROR;
@@ -658,5 +673,7 @@ BEGIN CATCH
   RETURN @@ERROR;
 END CATCH;
 go
+
+SELECT ime + ' ' + prezime AS '??? ? ??????? ??????????????', jmbg AS '????', email AS '????? ??????', lozinka AS '???????' FROM Korisnik WHERE uloga_id = 1
 
 USE Skolska_biblioteka;

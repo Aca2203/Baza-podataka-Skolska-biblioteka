@@ -69,6 +69,7 @@
   <ItemGroup>
     <Content Include="Login.aspx" />
     <Content Include="Web.config" />
+    <Content Include="Кontrolpanel.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Login.aspx.cs">
@@ -80,6 +81,13 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Skolska_biblioteka.cs" />
+    <Compile Include="Кontrolpanel.aspx.cs">
+      <DependentUpon>Кontrolpanel.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Кontrolpanel.aspx.designer.cs">
+      <DependentUpon>Кontrolpanel.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

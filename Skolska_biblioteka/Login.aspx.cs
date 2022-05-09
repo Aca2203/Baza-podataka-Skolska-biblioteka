@@ -20,10 +20,20 @@ namespace Skolska_biblioteka
             int rezultat;
             rezultat = klasa.Provera_Korisnika(txt_email.Text, txt_lozinka.Text);
 
-            if (rezultat == 0)
+            if (rezultat == 1)
             {
                 Session["korisnik"] = txt_email.Text;
-                Response.Redirect("kontrolpanel.aspx");
+                Response.Redirect("Clan.aspx");
+            }
+            if (rezultat == 2)
+            {
+                Session["korisnik"] = txt_email.Text;
+                Response.Redirect("Zaposleni.aspx");
+            }
+            if (rezultat == 3)
+            {
+                Session["korisnik"] = txt_email.Text;
+                Response.Redirect("Кontrolpanel.aspx");
             }
             else
             {
