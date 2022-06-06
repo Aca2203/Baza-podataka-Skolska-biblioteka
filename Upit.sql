@@ -251,7 +251,7 @@ CREATE TABLE Pozajmica(
 -- Stor procedure:
 
 go
-ALTER PROCEDURE Uloguj_se
+CREATE PROCEDURE Uloguj_se
 @email VARCHAR(50),
 @lozinka VARCHAR(30)
 AS
@@ -287,7 +287,11 @@ go
 go
 CREATE PROCEDURE Korisnik_Insert
 @email VARCHAR(50),
-@lozinka VARCHAR(30)
+@lozinka VARCHAR(30),
+@jmbg CHAR(17),
+@ime VARCHAR(20),
+@prezime VARCHAR(50),
+@uloga_id INT
 AS
 SET LOCK_TIMEOUT 3000;
 BEGIN TRY
@@ -295,7 +299,7 @@ BEGIN TRY
   WHERE email = @email)
   RETURN 1
   ELSE
-    INSERT INTO Korisnik (email, lozinka) VALUES (@email, @lozinka)
+    INSERT INTO Korisnik (email, lozinka, jmbg, ime, prezime, uloga_id) VALUES (@email, @lozinka, @jmbg, @ime, @prezime, @uloga_id)
     RETURN 0;
 END TRY
 BEGIN CATCH
@@ -303,17 +307,24 @@ BEGIN CATCH
 END CATCH;
 go
 
+SELECT *
+FROM Korisnik;
+
 go
 CREATE PROCEDURE Korisnik_Update
-@email NVARCHAR(50),
-@lozinka NVARCHAR(100)
+@email VARCHAR(50),
+@lozinka VARCHAR(100),
+@ime VARCHAR(20),
+@prezime VARCHAR(50),
+@jmbg CHAR(13),
+@uloga_id INT
 AS
 SET LOCK_TIMEOUT 3000;
 BEGIN TRY
   IF EXISTS (SELECT TOP 1 email FROM Korisnik
   WHERE email = @email)
   BEGIN
-    UPDATE Korisnik SET lozinka = @lozinka WHERE email = @email
+    UPDATE Korisnik SET lozinka = @lozinka, ime = @ime, prezime = @prezime, jmbg = @jmbg, uloga_id = @uloga_id WHERE email = @email
     RETURN 0;
   END
   RETURN -1;
@@ -673,7 +684,5 @@ BEGIN CATCH
   RETURN @@ERROR;
 END CATCH;
 go
-
-SELECT ime + ' ' + prezime AS '??? ? ??????? ??????????????', jmbg AS '????', email AS '????? ??????', lozinka AS '???????' FROM Korisnik WHERE uloga_id = 1
 
 USE Skolska_biblioteka;

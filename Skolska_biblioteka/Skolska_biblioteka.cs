@@ -58,13 +58,85 @@ namespace Skolska_biblioteka
             return rezultat;
         }
 
+        public int Korisnik_Insert(string email, string lozinka, string jmbg, string ime, string prezime, int uloga_id)
+        {
+            veza.ConnectionString = CS;
+
+            int rezultat = 0;
+
+            komanda.Connection = veza;
+            komanda.CommandType = CommandType.StoredProcedure;
+            komanda.CommandText = "Korisnik_Insert";
+
+            komanda.Parameters.Add(new SqlParameter("@email", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, email));
+            komanda.Parameters.Add(new SqlParameter("@lozinka", SqlDbType.VarChar, 30, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, lozinka));
+            komanda.Parameters.Add(new SqlParameter("@jmbg", SqlDbType.Char, 17, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, jmbg));
+            komanda.Parameters.Add(new SqlParameter("@ime", SqlDbType.VarChar, 20, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, ime));
+            komanda.Parameters.Add(new SqlParameter("@prezime", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, prezime));
+            komanda.Parameters.Add(new SqlParameter("@uloga_id", SqlDbType.Int, 4, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, uloga_id));
+            komanda.Parameters.Add(new SqlParameter("@RETURN_VALUE", SqlDbType.Int, 4, ParameterDirection.ReturnValue, true, 0, 0, "", DataRowVersion.Current, null));
+
+            veza.Open();
+            komanda.ExecuteNonQuery();
+            veza.Close();
+
+            int ret;
+            ret = (int) komanda.Parameters["@RETURN_VALUE"].Value;
+            if (ret == 0)
+            {
+                rezultat = 0;
+            }
+            else
+            {
+                rezultat = 1;
+            }
+
+            return rezultat;
+        }
+
+        public int Korisnik_Update(string email, string ime, string prezime, string jmbg, string lozinka, int uloga_id)
+        {
+            veza.ConnectionString = CS;
+
+            int rezultat = 0;
+
+            komanda.Connection = veza;
+            komanda.CommandType = CommandType.StoredProcedure;
+            komanda.CommandText = "Korisnik_Update";
+
+            komanda.Parameters.Add(new SqlParameter("@email", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, email));
+            komanda.Parameters.Add(new SqlParameter("@lozinka", SqlDbType.VarChar, 30, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, lozinka));
+            komanda.Parameters.Add(new SqlParameter("@jmbg", SqlDbType.Char, 17, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, jmbg));
+            komanda.Parameters.Add(new SqlParameter("@ime", SqlDbType.VarChar, 20, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, ime));
+            komanda.Parameters.Add(new SqlParameter("@prezime", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, prezime));
+            komanda.Parameters.Add(new SqlParameter("@uloga_id", SqlDbType.Int, 4, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, uloga_id));
+            komanda.Parameters.Add(new SqlParameter("@RETURN_VALUE", SqlDbType.Int, 4, ParameterDirection.ReturnValue, true, 0, 0, "", DataRowVersion.Current, null));
+
+            veza.Open();
+            komanda.ExecuteNonQuery();
+            veza.Close();
+
+            int ret;
+            ret = (int) komanda.Parameters["@RETURN_VALUE"].Value;
+            if (ret == 0)
+            {
+                rezultat = 0;
+            }
+            else
+            {
+                rezultat = -1;
+            }
+
+            return rezultat;
+        }
+
         public DataTable Grid_administrator_popuni()
         {
             tabela.Reset();
             tabela = new DataTable();
 
-            naredba = "SELECT ime + ' ' + prezime AS 'Име и презиме администратора', jmbg AS 'ЈМБГ', email AS 'Имејл адреса', lozinka AS 'Лозинка' FROM Korisnik WHERE uloga_id = 3";
-            
+            naredba = "SELECT ime + ' ' + prezime AS 'Име и презиме', jmbg AS 'ЈМБГ', email AS 'Имејл адреса', lozinka AS 'Лозинка' FROM Korisnik WHERE uloga_id = 3";
+
             adapter = new SqlDataAdapter(naredba, veza);
 
             veza.ConnectionString = CS;
@@ -80,7 +152,7 @@ namespace Skolska_biblioteka
             tabela.Reset();
             tabela = new DataTable();
 
-            naredba = "SELECT ime + ' ' + prezime AS 'Име и презиме запосленог', jmbg AS 'ЈМБГ', email AS 'Имејл адреса', lozinka AS 'Лозинка' FROM Korisnik WHERE uloga_id = 2";
+            naredba = "SELECT ime + ' ' + prezime AS 'Име и презиме', jmbg AS 'ЈМБГ', email AS 'Имејл адреса', lozinka AS 'Лозинка' FROM Korisnik WHERE uloga_id = 2";
 
             adapter = new SqlDataAdapter(naredba, veza);
 
@@ -97,7 +169,7 @@ namespace Skolska_biblioteka
             tabela.Reset();
             tabela = new DataTable();
 
-            naredba = "SELECT ime + ' ' + prezime AS 'Име и презиме члана', jmbg AS 'ЈМБГ', email AS 'Имејл адреса', lozinka AS 'Лозинка' FROM Korisnik WHERE uloga_id = 1";
+            naredba = "SELECT ime + ' ' + prezime AS 'Име и презиме', jmbg AS 'ЈМБГ', email AS 'Имејл адреса', lozinka AS 'Лозинка' FROM Korisnik WHERE uloga_id = 1";
 
             adapter = new SqlDataAdapter(naredba, veza);
 
@@ -108,5 +180,22 @@ namespace Skolska_biblioteka
 
             return tabela;
         }
+
+        public DataTable Combo_uloga_popuni()
+        {
+            tabela.Reset();
+            tabela = new DataTable();
+
+            naredba = "SELECT id, naziv FROM Uloga";
+
+            adapter = new SqlDataAdapter(naredba, veza);
+
+            veza.ConnectionString = CS;
+            veza.Open();
+            adapter.Fill(tabela);
+            veza.Close();
+
+            return tabela;
+        }        
     }
 }
