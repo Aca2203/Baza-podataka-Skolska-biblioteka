@@ -17,6 +17,7 @@ namespace Skolska_biblioteka
         DataSet set = new DataSet();
         string naredba;
         DataTable tabela = new DataTable();
+        static public string email;
 
         public int Provera_Korisnika(string email, string lozinka)
         {
@@ -196,6 +197,23 @@ namespace Skolska_biblioteka
             veza.Close();
 
             return tabela;
-        }        
+        }
+
+        public DataTable Pozajmica_popuni()
+        {
+            tabela.Reset();
+            tabela = new DataTable();
+
+            naredba = "SELECT * FROM Pozajmica WHERE zaposleni_email = '" + email + "'";
+
+            adapter = new SqlDataAdapter(naredba, veza);
+
+            veza.ConnectionString = CS;
+            veza.Open();
+            adapter.Fill(tabela);
+            veza.Close();
+
+            return tabela;
+        }
     }
 }

@@ -40,8 +40,7 @@ FROM Izdavac;
 
 CREATE TABLE Knjizevni_rod(
   id INT PRIMARY KEY,
-  naziv VARCHAR(50) NOT NULL,
-  opis VARCHAR(500)
+  naziv VARCHAR(50) NOT NULL
 );
 
 INSERT INTO Knjizevni_rod (id, naziv) VALUES (1, 'Lirika'),
@@ -56,7 +55,6 @@ FROM Knjizevni_rod;
 CREATE TABLE Knjizevna_vrsta(
   id INT PRIMARY KEY IDENTITY (1, 1),
   naziv VARCHAR(50) NOT NULL,
-  opis VARCHAR(500),
   knjizevni_rod_id INT FOREIGN KEY REFERENCES Knjizevni_rod(id)
 );
 
@@ -69,34 +67,6 @@ INSERT INTO Knjizevna_vrsta (naziv, knjizevni_rod_id) VALUES ('Roman', 2),
 
 SELECT *
 FROM Knjizevna_vrsta;
-
--- Funkcija ,,datumRodjenja''
-
-CREATE FUNCTION datumRodjenja(@jmbg CHAR(13))
-RETURNS DATE
-AS
-	BEGIN
-		DECLARE @datum_rodjenja DATE;
-		IF SUBSTRING(@jmbg, 5, 1) = '0' SET @datum_rodjenja = '2' + SUBSTRING(@jmbg, 5, 3) + '-' + SUBSTRING(@jmbg, 3, 2) + '-' + SUBSTRING(@jmbg, 1, 2)
-		ELSE SET @datum_rodjenja = '1' + SUBSTRING(@jmbg, 5, 3) + '-' + SUBSTRING(@jmbg, 3, 2) + '-' + SUBSTRING(@jmbg, 1, 2);
-		
-		RETURN @datum_rodjenja;
-	END;
-
--- Funkcija ,,brojGodina''
-
-CREATE FUNCTION brojGodina(@jmbg CHAR(13))
-RETURNS INT
-AS
-	BEGIN
-		DECLARE @datum_rodjenja DATE;
-		IF SUBSTRING(@jmbg, 5, 1) = '0' SET @datum_rodjenja = '2' + SUBSTRING(@jmbg, 5, 3) + '-' + SUBSTRING(@jmbg, 3, 2) + '-' + SUBSTRING(@jmbg, 1, 2)
-		ELSE SET @datum_rodjenja = '1' + SUBSTRING(@jmbg, 5, 3) + '-' + SUBSTRING(@jmbg, 3, 2) + '-' + SUBSTRING(@jmbg, 1, 2);
-	
-		DECLARE @broj INT = DATEDIFF(YEAR, @datum_rodjenja, GETDATE());
-		IF RIGHT(CONVERT(VARCHAR, @datum_rodjenja, 112), 4) > RIGHT(CONVERT(VARCHAR, GETDATE(), 112), 4) RETURN @broj - 1;
-		RETURN @broj;
-	END;
 	
 -- Tabela ,,Korisnik''
 
@@ -109,9 +79,9 @@ CREATE TABLE Korisnik(
   uloga_id INT FOREIGN KEY REFERENCES Uloga(id)
 );
 
-INSERT INTO Korisnik (email, lozinka, jmbg, ime, prezime, uloga_id) VALUES (N'stefanovicsalex@SKBibioteka_C.rs', 'coamafija1312', '2210003710256', 'Aleksandar', 'Stefanovic', 1),
-('stefanovicsalex@SKBibioteka_Z.rs', 'coamafija1312', '2210003710256', 'Aleksandar', 'Stefanovic', 2),
-('stefanovicsalex@SKBibioteka_A.rs', 'coamafija1312', '2210003710256', 'Aleksandar', 'Stefanovic', 3),
+INSERT INTO Korisnik (email, lozinka, jmbg, ime, prezime, uloga_id) VALUES (N'stefanovicsalex@SKBibioteka_C.rs', 'aca123', '2210003710256', 'Aleksandar', 'Stefanovic', 1),
+('stefanovicsalex@SKBibioteka_Z.rs', 'aca123', '2210003710256', 'Aleksandar', 'Stefanovic', 2),
+('stefanovicsalex@SKBibioteka_A.rs', 'aca123', '2210003710256', 'Aleksandar', 'Stefanovic', 3),
 ('aleksandargerasimovic@SKBibioteka_A.rs', 'alekgera551', '1502970710742', 'Aleksandar', 'Gerasimovic', 3),
 ('milosurosevic@SKBibioteka_C.rs', 'losmi321', '2106003710932', 'Milos', 'Urosevic', 1),
 ('jelenanikolic@SKBibioteka_Z.rs', 'jecapereca95', '1707995700111', 'Jelena', 'Nikolic', 2),
@@ -121,85 +91,27 @@ INSERT INTO Korisnik (email, lozinka, jmbg, ime, prezime, uloga_id) VALUES (N'st
 SELECT *
 FROM Korisnik;
 
--- Funkcija ,,brojGodinaAutor''
-
-CREATE FUNCTION brojGodinaAutor(@datum_rodjenja DATE, @datum_smrti DATE)
-RETURNS INT
-AS
-BEGIN
-	DECLARE @broj INT = DATEDIFF(YEAR, @datum_rodjenja, @datum_smrti);
-	IF RIGHT(CONVERT(VARCHAR, @datum_rodjenja, 112), 4) > RIGHT(CONVERT(VARCHAR, @datum_smrti, 112), 4) RETURN @broj - 1;
-	RETURN @broj;
-END;
-
--- Tabela ,,Autor_dodatniPodaci''
-
-CREATE TABLE Autor_dodatniPodaci(
-  id INT PRIMARY KEY IDENTITY (1, 1),
-  datum_rodjenja DATE,
-  datum_smrti DATE,
-  broj_godina AS dbo.brojGodinaAutor(datum_rodjenja, datum_smrti),
-  mesto_rodjenja VARCHAR(40),
-  mesto_smrti VARCHAR(40),
-  biografija VARCHAR(2000),
-  ocena INT -- od 1 do 10
-);
-
-INSERT INTO Autor_dodatniPodaci (datum_rodjenja, datum_smrti, mesto_rodjenja, mesto_smrti, ocena) VALUES ('1892-10-09', '1975-03-13', 'Dolac, Austrougarska', 'Beograd, SFR Jugoslavija', 10), -- Ivo Andric
-('1821-11-11', '1881-02-09', 'Moskva, Ruska Imperija', N'Sankt Peterburg, Ruska Imperija', 9), -- Dostojevski
-('1828-09-09', '1910-11-20', N'Jasna Poljana, Ruska Imperija', N'Astapovo, Ruska Imperija', 8); -- Tolstoj
-
-SELECT *
-FROM Autor_dodatniPodaci;
-
 -- Tabela ,,Autor''
 
 CREATE TABLE Autor(
   id INT PRIMARY KEY IDENTITY (1, 1),
   ime VARCHAR(20) NOT NULL,
-  prezime VARCHAR(50) NOT NULL,
-  dodatniPodaci_id INT FOREIGN KEY REFERENCES Autor_dodatniPodaci(id)
+  prezime VARCHAR(50) NOT NULL
 );
 
-INSERT INTO Autor (ime, prezime, dodatniPodaci_id) VALUES ('Ivo', 'Andric', 1),
-('Dobrica', 'Eric', NULL),
-('Fjodor', 'Mihajlovic Dostojevski', 2),
-('Dobrica', 'Cosic', NULL),
-('Milos', 'Crnjanski', NULL),
-('Lav', 'Nikolajevic Tolstoj', 3),
-('Mark', 'Tven', NULL),
-('Dzordz', 'Orvel', NULL),
-('Zil', 'Vern', NULL),
-('Mesa', 'Selimovic', NULL);
+INSERT INTO Autor (ime, prezime) VALUES ('Ivo', 'Andric'),
+('Dobrica', 'Eric'),
+('Fjodor', 'Mihajlovic Dostojevski'),
+('Dobrica', 'Cosic'),
+('Milos', 'Crnjanski'),
+('Lav', 'Nikolajevic Tolstoj'),
+('Mark', 'Tven'),
+('Dzordz', 'Orvel'),
+('Zil', 'Vern'),
+('Mesa', 'Selimovic');
 
 SELECT *
-FROM Autor
-JOIN Autor_dodatniPodaci ON Autor.dodatniPodaci_id = Autor_dodatniPodaci.id;
-
--- Funkcija ,,starostKnjige''
-
-CREATE FUNCTION starostKnjige(@godina INT)
-RETURNS INT
-AS
-BEGIN
-	DECLARE @starost INT = CAST(LEFT(CONVERT(VARCHAR, GETDATE(), 112), 4) AS INT) - @godina;
-	RETURN @starost;
-END;
-
--- Tabela ,,Knjiga_dodatniPodaci''
-
-CREATE TABLE Knjiga_dodatniPodaci(
-  id INT PRIMARY KEY IDENTITY (1, 1),
-  godina_objavljivanja INT,
-  starost_knjige AS dbo.starostKnjige(godina_objavljivanja)
-);
-
-INSERT INTO Knjiga_dodatniPodaci (godina_objavljivanja) VALUES (1945), -- Na Drini cuprija
-(1966), -- Vasar u Topoli
-(1866); -- 
-
-SELECT *
-FROM Knjiga_dodatniPodaci;
+FROM Autor;
 
 -- Tabela ,,Knjiga''
 
@@ -208,21 +120,20 @@ CREATE TABLE Knjiga(
   naziv VARCHAR(70) NOT NULL,
   knjizevni_rod_id INT FOREIGN KEY REFERENCES Knjizevni_rod(id),
   knjizevna_vrsta_id INT FOREIGN KEY REFERENCES Knjizevna_vrsta(id),
-  dodatniPodaci_id INT FOREIGN KEY REFERENCES Knjiga_dodatniPodaci(id),
   izdavac_id INT FOREIGN KEY REFERENCES Izdavac(id),
   kolicina INT NOT NULL
 );
 
-INSERT INTO Knjiga (ISBN, naziv, knjizevni_rod_id, knjizevna_vrsta_id, dodatniPodaci_id, izdavac_id, kolicina) VALUES ('978-86-1729-12-17', 'Na Drini cuprija', 2, 1, 1, 2, 5),
-('978-86-7401-132-1', 'Ana Karenjina', 2, 1, NULL, 1, 3),
-('978-86-4130-1-131', 'Rat i mir', 2, 1, NULL, 3, 0),
-('978-86-7410-431-1', '20000 milja pod morem', 2, 1, NULL, 5, 5),
-('978-86-4710-709-2', 'Vasar u Topoli', 1, 6, 2, 4, 0),
-('978-86-4109-812-5', 'Koreni', 2, 1, NULL, 2, 5),
-('978-86-0971-8-838', 'Deobe', 2, 1, NULL, 1, 10),
-('978-86-0183-99-22', 'Vreme vlasti', 2, 1, NULL, 4, 7),
-('978-86-0193-092-1', 'Dervis i smrt', 2, 1, 2, 3, 4),
-('978-86-8536-928-6', 'Zivotinjska farma', 2, 1, 1, 1, 4);
+INSERT INTO Knjiga (ISBN, naziv, knjizevni_rod_id, knjizevna_vrsta_id, izdavac_id, kolicina) VALUES ('978-86-1729-12-17', 'Na Drini cuprija', 2, 1, 2, 5),
+('978-86-7401-132-1', 'Ana Karenjina', 2, 1, 1, 3),
+('978-86-4130-1-131', 'Rat i mir', 2, 1, 3, 0),
+('978-86-7410-431-1', '20000 milja pod morem', 2, 1, 5, 5),
+('978-86-4710-709-2', 'Vasar u Topoli', 1, 6, 4, 0),
+('978-86-4109-812-5', 'Koreni', 2, 1, 2, 5),
+('978-86-0971-8-838', 'Deobe', 2, 1, 1, 10),
+('978-86-0183-99-22', 'Vreme vlasti', 2, 1, 4, 7),
+('978-86-0193-092-1', 'Dervis i smrt', 2, 1, 3, 4),
+('978-86-8536-928-6', 'Zivotinjska farma', 2, 1, 1, 4);
 
 SELECT *
 FROM Knjiga;
