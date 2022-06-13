@@ -1,7 +1,7 @@
 -- Kreiranje baze podataka:
 
-CREATE DATABASE Skolska_biblioteka;
-USE Skolska_biblioteka;
+CREATE DATABASE Skolska_biblioteka2;
+USE Skolska_biblioteka2;
 
 -- Kreiranje tabela:
 
@@ -150,14 +150,16 @@ CREATE TABLE Autor_Knjiga(
 
 CREATE TABLE Pozajmica(
   id INT PRIMARY KEY IDENTITY (1, 1),
-  datum_uzimanja DATE NOT NULL,
-  rok INT NOT NULL,
-  datum_vracanja DATE NOT NULL, -- uraditi funkciju!
+  datum_uzimanja DATE NOT NULL,  
+  datum_vracanja DATE NOT NULL,
   vraceno CHAR(2) NOT NULL,
   clan_email VARCHAR(50) FOREIGN KEY REFERENCES Korisnik(email),
   zaposleni_email VARCHAR(50) FOREIGN KEY REFERENCES Korisnik(email),
   knjiga_ISBN CHAR(17) FOREIGN KEY REFERENCES Knjiga(ISBN)
 );
+
+select *
+from Pozajmica;
 
 -- Stor procedure:
 
@@ -468,22 +470,16 @@ END CATCH;
 go
 
 go
-CREATE PROCEDURE Pozajmica_Insert
-@id INT,
+alter PROCEDURE Pozajmica_Insert
 @datum_uzimanja DATE,
-@rok INT,
-@vraceno CHAR(2),
+@datum_vracanja DATE,
 @clan_email VARCHAR(50),
 @zaposleni_email VARCHAR(50),
 @knjiga_ISBN CHAR(17)
 AS
 SET LOCK_TIMEOUT 3000;
 BEGIN TRY
-  IF EXISTS (SELECT TOP 1 id FROM Pozajmica
-  WHERE id = @id)
-  RETURN 1;
-  ELSE
-    INSERT INTO Pozajmica (id, datum_uzimanja, rok, vraceno, clan_email, zaposleni_email, knjiga_ISBN) VALUES (@id, @datum_uzimanja, @rok, @vraceno, @clan_email, @zaposleni_email, @knjiga_ISBN);
+    INSERT INTO Pozajmica (datum_uzimanja, datum_vracanja, vraceno, clan_email, zaposleni_email, knjiga_ISBN) VALUES (@datum_uzimanja, @datum_vracanja, 'ne', @clan_email, @zaposleni_email, @knjiga_ISBN);
     RETURN 0;
 END TRY
 BEGIN CATCH
@@ -491,11 +487,15 @@ BEGIN CATCH
 END CATCH;
 go
 
+select * from Pozajmica;
+SELECT TOP 1 id FROM Pozajmica
+  WHERE id = 0
+
 go
-CREATE PROCEDURE Pozajmica_Update
+alter PROCEDURE Pozajmica_Update
 @id INT,
 @datum_uzimanja DATE,
-@rok INT,
+@datum_vracanja DATE,
 @vraceno CHAR(2),
 @clan_email VARCHAR(50),
 @zaposleni_email VARCHAR(50),
@@ -506,7 +506,7 @@ BEGIN TRY
   IF EXISTS (SELECT TOP 1 id FROM Pozajmica
   WHERE id = @id)
   BEGIN
-    UPDATE Pozajmica SET datum_uzimanja = @datum_uzimanja, rok = @rok, vraceno = @vraceno, clan_email = @clan_email, zaposleni_email = @zaposleni_email, knjiga_ISBN = @knjiga_ISBN WHERE id = @id;
+    UPDATE Pozajmica SET datum_uzimanja = @datum_uzimanja, datum_vracanja = @datum_vracanja, vraceno = @vraceno, clan_email = @clan_email, zaposleni_email = @zaposleni_email, knjiga_ISBN = @knjiga_ISBN WHERE id = @id;
     RETURN 0;
   END
   RETURN -1;

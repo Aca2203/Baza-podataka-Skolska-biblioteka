@@ -204,7 +204,7 @@ namespace Skolska_biblioteka
             tabela.Reset();
             tabela = new DataTable();
 
-            naredba = "SELECT * FROM Pozajmica WHERE zaposleni_email = '" + email + "'";
+            naredba = "SELECT id, datum_uzimanja, datum_vracanja, clan_email, Knjiga.naziv, vraceno FROM Pozajmica JOIN Knjiga ON Knjiga.ISBN = Pozajmica.knjiga_ISBN WHERE zaposleni_email = '" + email + "' ORDER BY vraceno DESC";
 
             adapter = new SqlDataAdapter(naredba, veza);
 
@@ -214,6 +214,58 @@ namespace Skolska_biblioteka
             veza.Close();
 
             return tabela;
+        }
+
+        public int Pozajmica_Insert(DateTime datum_uzimanja, DateTime datum_vracanja, string clan_email, string zaposleni_email, string knjiga_ISBN)
+        {
+            veza.ConnectionString = CS;            
+
+            komanda.Connection = veza;
+            komanda.CommandType = CommandType.StoredProcedure;
+            komanda.CommandText = "Pozajmica_Insert";
+
+            komanda.Parameters.Add(new SqlParameter("@datum_uzimanja", SqlDbType.DateTime, 100, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, datum_uzimanja));
+            komanda.Parameters.Add(new SqlParameter("@datum_vracanja", SqlDbType.DateTime, 100, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, datum_vracanja));
+            komanda.Parameters.Add(new SqlParameter("@clan_email", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, clan_email));
+            komanda.Parameters.Add(new SqlParameter("@zaposleni_email", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, zaposleni_email));
+            komanda.Parameters.Add(new SqlParameter("@knjiga_ISBN", SqlDbType.Char, 17, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, knjiga_ISBN));
+            komanda.Parameters.Add(new SqlParameter("@RETURN_VALUE", SqlDbType.Int, 4, ParameterDirection.ReturnValue, true, 0, 0, "", DataRowVersion.Current, null));
+
+            veza.Open();
+            komanda.ExecuteNonQuery();
+            veza.Close();
+
+            int ret;
+            ret = (int) komanda.Parameters["@RETURN_VALUE"].Value;            
+
+            return ret;
+        }
+
+        public int Pozajmica_Update(int id, DateTime datum_uzimanja, DateTime datum_vracanja, string vraceno, string clan_email, string zaposleni_email, string knjiga_ISBN)
+        {
+            veza.ConnectionString = CS;
+
+            komanda.Connection = veza;
+            komanda.CommandType = CommandType.StoredProcedure;
+            komanda.CommandText = "Pozajmica_Update";
+
+            komanda.Parameters.Add(new SqlParameter("@id", SqlDbType.Int, 4, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, id));
+            komanda.Parameters.Add(new SqlParameter("@datum_uzimanja", SqlDbType.DateTime, 100, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, datum_uzimanja));
+            komanda.Parameters.Add(new SqlParameter("@datum_vracanja", SqlDbType.DateTime, 100, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, datum_vracanja));
+            komanda.Parameters.Add(new SqlParameter("@vraceno", SqlDbType.Char, 2, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, vraceno));
+            komanda.Parameters.Add(new SqlParameter("@clan_email", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, clan_email));
+            komanda.Parameters.Add(new SqlParameter("@zaposleni_email", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, zaposleni_email));
+            komanda.Parameters.Add(new SqlParameter("@knjiga_ISBN", SqlDbType.Char, 17, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, knjiga_ISBN));
+            komanda.Parameters.Add(new SqlParameter("@RETURN_VALUE", SqlDbType.Int, 4, ParameterDirection.ReturnValue, true, 0, 0, "", DataRowVersion.Current, null));
+
+            veza.Open();
+            komanda.ExecuteNonQuery();
+            veza.Close();
+
+            int ret;
+            ret = (int)komanda.Parameters["@RETURN_VALUE"].Value;
+
+            return ret;
         }
     }
 }
