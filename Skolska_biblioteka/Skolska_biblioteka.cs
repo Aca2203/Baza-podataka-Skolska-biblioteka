@@ -204,7 +204,7 @@ namespace Skolska_biblioteka
             tabela.Reset();
             tabela = new DataTable();
 
-            naredba = "SELECT id, datum_uzimanja, datum_vracanja, clan_email, Knjiga.naziv, vraceno FROM Pozajmica JOIN Knjiga ON Knjiga.ISBN = Pozajmica.knjiga_ISBN WHERE zaposleni_email = '" + email + "' ORDER BY vraceno DESC";
+            naredba = "SELECT id, clan_email, Knjiga.naziv, datum_uzimanja, datum_vracanja, vraceno FROM Pozajmica JOIN Knjiga ON Knjiga.ISBN = Pozajmica.knjiga_ISBN WHERE zaposleni_email = '" + email + "' ORDER BY vraceno DESC";
 
             adapter = new SqlDataAdapter(naredba, veza);
 
@@ -266,6 +266,21 @@ namespace Skolska_biblioteka
             ret = (int)komanda.Parameters["@RETURN_VALUE"].Value;
 
             return ret;
+        }
+
+        public void Pozajmica_Delete(int id)
+        {
+            veza.ConnectionString = CS;
+
+            komanda.Connection = veza;
+            komanda.CommandType = CommandType.StoredProcedure;
+            komanda.CommandText = "Pozajmica_Delete";
+
+            komanda.Parameters.Add(new SqlParameter("@id", SqlDbType.Int, 4, ParameterDirection.Input, false, 0, 0, "", DataRowVersion.Current, id));
+
+            veza.Open();
+            komanda.ExecuteNonQuery();
+            veza.Close();            
         }
     }
 }

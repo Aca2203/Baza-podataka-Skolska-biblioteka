@@ -5,16 +5,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
-</head>
+</head>    
+
 <body>
-    <form id="form1" runat="server">
+    <form id="form1" runat="server">        
         <div>
             Преглед позајмица:</div>
         <asp:GridView ID="GridView1" runat="server">
             <Columns>
                 <asp:TemplateField HeaderText="*">                    
                     <ItemTemplate>
-                        <asp:LinkButton ID="Pozajmica_Izmeni" CssClass="link" runat="server" Text="Измени" CommandArgument='<% #Eval("id")%>' OnClick="Pozajmica_Izmeni" />
+                        <asp:LinkButton ID="Pozajmica_Izmeni" CssClass="link" runat="server" Text="Измени" CommandArgument='<%#Eval("id")%>' OnClick="Pozajmica_Izmeni" />
                     </ItemTemplate>                                        
                 </asp:TemplateField>  
 

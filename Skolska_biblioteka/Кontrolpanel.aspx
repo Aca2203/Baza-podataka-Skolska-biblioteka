@@ -5,12 +5,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
-</head>    
+</head> 
      
 <body>
-    <form id="form" runat="server" style = "overflow: hidden">
-        <div float = "left">
-            Преглед администратора:<br />
+    <form id="form" runat="server">        
+        <div float = "center">
+            <center>Преглед администратора:</center><br />
             <asp:GridView ID="grid_administrator" runat="server" HorizontalAlign = "Center">
                 <Columns>                                      
                 
@@ -28,7 +28,7 @@
                 </Columns>
             </asp:GridView>
             <br />
-            Преглед запослених:<br />
+            <center>Преглед запослених:</center><br />
             <asp:GridView ID="grid_zaposleni" runat="server" HorizontalAlign = "Center">
                 <Columns>                    
                 <asp:TemplateField HeaderText="*">
@@ -45,7 +45,7 @@
                 </Columns>
             </asp:GridView>
             <br />
-            Преглед чланова:<br />
+            <center>Преглед чланова:</center><br />
             <asp:GridView ID="grid_clan" runat="server" HorizontalAlign = "Center">
                 <Columns>                                       
 

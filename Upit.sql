@@ -479,13 +479,21 @@ alter PROCEDURE Pozajmica_Insert
 AS
 SET LOCK_TIMEOUT 3000;
 BEGIN TRY
+	IF (SELECT kolicina FROM Knjiga WHERE ISBN = @knjiga_ISBN) = 0 RETURN -1;
+	IF EXISTS(SELECT TOP 1 id FROM Pozajmica WHERE clan_email = @clan_email AND vraceno = 'ne') RETURN -2;
     INSERT INTO Pozajmica (datum_uzimanja, datum_vracanja, vraceno, clan_email, zaposleni_email, knjiga_ISBN) VALUES (@datum_uzimanja, @datum_vracanja, 'ne', @clan_email, @zaposleni_email, @knjiga_ISBN);
+    UPDATE Knjiga
+    SET kolicina = kolicina - 1
+    WHERE ISBN = @knjiga_ISBN;
     RETURN 0;
 END TRY
 BEGIN CATCH
   RETURN @@ERROR;
 END CATCH;
 go
+
+SELECT *
+FROM Knjiga;
 
 select * from Pozajmica;
 SELECT TOP 1 id FROM Pozajmica
@@ -515,6 +523,23 @@ BEGIN CATCH
   RETURN @@ERROR;
 END CATCH;
 go
+
+CREATE PROCEDURE Pozajmica_Delete
+@id INT
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+  DECLARE @knjiga_ISBN CHAR(17);
+  SELECT @knjiga_ISBN = knjiga_ISBN FROM Pozajmica WHERE id = @id;
+  DELETE FROM Pozajmica WHERE id = @id;  
+  
+  UPDATE Knjiga
+  SET kolicina = kolicina + 1
+  WHERE ISBN = @knjiga_ISBN;
+END TRY
+BEGIN CATCH
+  RETURN @@ERROR;
+END CATCH;
 
 go
 CREATE PROCEDURE Knjiga_dodatniPodaci_Insert

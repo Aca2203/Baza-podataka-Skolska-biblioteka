@@ -32,11 +32,20 @@ namespace Skolska_biblioteka
         protected void btn_unesi_Click(object sender, EventArgs e)
         {
             Skolska_biblioteka klasa = new Skolska_biblioteka();
-            int ret = klasa.Pozajmica_Insert(datum_uzimanja.SelectedDate, datum_vracanja.SelectedDate, cmb_clan.SelectedValue, Skolska_biblioteka.email, cmb_knjiga.SelectedValue);
-
-            //Response.Write(datum_uzimanja.SelectedDate + " " + datum_vracanja.SelectedDate + " " + cmb_clan.SelectedValue + " " + Skolska_biblioteka.email + " " + cmb_knjiga.SelectedValue);
-
-            Response.Write(ret);
+            int ret = klasa.Pozajmica_Insert(datum_uzimanja.SelectedDate, datum_vracanja.SelectedDate, cmb_clan.SelectedValue, Skolska_biblioteka.email, cmb_knjiga.SelectedValue);            
+            if (ret == -1)
+            {
+                Response.Write("Nema knjiga na stanju!");
+            }
+            else
+            if (ret == -2)
+            {
+                Response.Write("Korisnik vec ima pozajmicu u toku!");
+            }
+            else
+            {
+                Response.Redirect("Zaposleni.aspx");
+            }
         }
 
         public void Pozajmica_Izmeni(object sender, EventArgs e)
@@ -52,18 +61,9 @@ namespace Skolska_biblioteka
         public void Pozajmica_Obrisi(object sender, EventArgs e)
         {
             int id = Convert.ToInt32((sender as LinkButton).CommandArgument);
-            string naredba = "DELETE FROM Pozajmica WHERE id = " + id;
 
-            string CS = ConfigurationManager.ConnectionStrings["Skolska_biblioteka"].ConnectionString;
-            SqlConnection veza = new SqlConnection(CS);
-
-            SqlCommand komanda = new SqlCommand(naredba, veza);
-
-            //Response.Write(naredba);
-
-            veza.Open();
-            komanda.ExecuteNonQuery();
-            veza.Close();            
+            Skolska_biblioteka klasa = new Skolska_biblioteka();
+            klasa.Pozajmica_Delete(id);
 
             Response.Redirect("Zaposleni.aspx");
         }
